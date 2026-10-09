@@ -1,0 +1,178 @@
+PASS template and sample hooks identical
+PASS pack hook identical to sample
+PASS BLOCK empty input
+PASS BLOCK garbage input
+PASS BLOCK missing path (empty tool_input)
+PASS BLOCK missing tool_input
+PASS BLOCK JSON null
+PASS BLOCK JSON array
+PASS BLOCK Bash with no command
+PASS BLOCK Bash empty command
+PASS BLOCK non-string path
+PASS BLOCK BOM + .env edit
+PASS BLOCK Edit .env
+PASS BLOCK Edit config/.env.production
+PASS BLOCK Edit secrets/db.json
+PASS BLOCK Edit deploy\server.pem
+PASS BLOCK Edit k.key
+PASS BLOCK Edit x.p12
+PASS BLOCK Edit x.pfx
+PASS BLOCK Edit ~/.ssh/id_rsa
+PASS BLOCK Edit id_ed25519
+PASS BLOCK Edit credentials.json
+PASS BLOCK Edit a/credentials
+PASS BLOCK Edit C:\r\.env.local
+PASS BLOCK Write .env
+PASS BLOCK MultiEdit .env
+PASS BLOCK NotebookEdit secrets/
+PASS BLOCK Bash: cat .env
+PASS BLOCK Bash: type .env
+PASS BLOCK Bash: Get-Content .env
+PASS BLOCK Bash: gc .env
+PASS BLOCK Bash: less .env
+PASS BLOCK Bash: more .env
+PASS BLOCK Bash: head -5 .env
+PASS BLOCK Bash: tail .env
+PASS BLOCK Bash: tail -f .env.local
+PASS BLOCK Bash: grep KEY .env
+PASS BLOCK Bash: rg KEY .env
+PASS BLOCK Bash: Select-String KEY .env
+PASS BLOCK Bash: findstr KEY .env
+PASS BLOCK Bash: sed -n 1p .env
+PASS BLOCK Bash: awk '{print}' .env
+PASS BLOCK Bash: cp .env /tmp/x
+PASS BLOCK Bash: copy .env x.txt
+PASS BLOCK Bash: base64 .env
+PASS BLOCK Bash: xxd .env
+PASS BLOCK Bash: strings .env
+PASS BLOCK Bash: source .env
+PASS BLOCK Bash: . .env
+PASS BLOCK Bash: cat < .env
+PASS BLOCK Bash: cat<.env
+PASS BLOCK Bash: cat ./.env
+PASS BLOCK Bash: cat app/.env
+PASS BLOCK Bash: cat .env.production
+PASS BLOCK Bash: cat .ENV
+PASS BLOCK Bash: cat '.env'
+PASS BLOCK Bash: cat ".env"
+PASS BLOCK Bash: cat .\.env
+PASS BLOCK Bash: Get-Content -Path .\.env
+PASS BLOCK Bash: cat secrets/x
+PASS BLOCK Bash: cat secrets\x
+PASS BLOCK Bash: ls secrets
+PASS BLOCK Bash: cat server.pem
+PASS BLOCK Bash: cat a/b.key
+PASS BLOCK Bash: cat id_rsa
+PASS BLOCK Bash: cat ~/.ssh/id_rsa
+PASS BLOCK Bash: cat ~/.ssh/id_ed25519
+PASS BLOCK Bash: cat credentials.json
+PASS BLOCK Bash: cat ~/.aws/credentials
+PASS BLOCK Bash: git status && cat .env
+PASS BLOCK Bash: git status; cat .env
+PASS BLOCK Bash: echo hi | cat .env
+PASS BLOCK Bash: git show HEAD:.env
+PASS BLOCK Bash: git add .env
+PASS BLOCK Bash: cat .e*
+PASS BLOCK Bash: cat .en?
+PASS BLOCK Bash: cat .[e]nv
+PASS BLOCK Bash: cat .e""nv
+PASS BLOCK Bash: cat .e\nv
+PASS BLOCK Bash: cat *env
+PASS BLOCK Bash: cat .*
+PASS BLOCK Bash: git status $(cat .env)
+PASS BLOCK Bash: cat app/main.py .env
+PASS BLOCK Bash: cat .env.example .env
+PASS BLOCK Bash: echo x > .env
+PASS BLOCK Bash: cat x.pem
+PASS BLOCK Bash: openssl rsa -in k.p12
+PASS BLOCK PowerShell: cat .env
+PASS BLOCK PowerShell: type .env
+PASS BLOCK PowerShell: Get-Content .env
+PASS BLOCK PowerShell: gc .env
+PASS BLOCK PowerShell: cat secrets/x
+PASS BLOCK PowerShell: cat server.pem
+PASS BLOCK PowerShell: Get-Content -Raw .\.env
+PASS ALLOW BOM + allowed edit
+PASS ALLOW Edit app/main.py
+PASS ALLOW Edit src/routes/orders.ts
+PASS ALLOW Edit README.md
+PASS ALLOW Edit .env.example
+PASS ALLOW Edit config/.env.sample
+PASS ALLOW Edit .env.template
+PASS ALLOW Edit docs/secretary.md
+PASS ALLOW Bash: cat README.md
+PASS ALLOW Bash: cat app/main.py
+PASS ALLOW Bash: npm test
+PASS ALLOW Bash: git status
+PASS ALLOW Bash: git diff
+PASS ALLOW Bash: git log --oneline
+PASS ALLOW Bash: python -m pytest -q
+PASS ALLOW Bash: ruff check .
+PASS ALLOW Bash: grep -r foo app/
+PASS ALLOW Bash: cat .env.example
+PASS ALLOW Bash: cat config/.env.sample
+PASS ALLOW Bash: type .env.template
+PASS ALLOW Bash: git status -s
+PASS ALLOW Bash: git check-ignore .env
+PASS ALLOW Bash: git ls-files .env
+PASS ALLOW Bash: ls -la
+PASS ALLOW Bash: ls
+PASS ALLOW Bash: npm run build
+PASS ALLOW Bash: pip install python-dotenv
+PASS ALLOW Bash: cat package.json
+PASS ALLOW Bash: grep -rn TODO src/
+PASS ALLOW Bash: node --check hook.js
+PASS ALLOW Bash: echo secretary
+PASS ALLOW Bash: cat docs/keyboard.md
+PASS ALLOW Bash: head -5 app/main.py
+PASS ALLOW Bash: Get-Content README.md
+PASS ALLOW Bash: python manage.py runserver
+PASS ALLOW PowerShell: cat app/main.py
+PASS ALLOW PowerShell: npm test
+PASS ALLOW PowerShell: Get-Content README.md
+PASS ALLOW PowerShell: git status
+PASS ALLOW PowerShell: cat .env.example
+
+-- KNOWN GAPS (informational; see KNOWN-GAPS.txt) --
+NOT BLOCKED  python -c "print(open('.en'+'v').read())"
+NOT BLOCKED  python -c "print(open(chr(46)+'env').read())"
+NOT BLOCKED  node -e "console.log(require('fs').readFileSync('.'+'env','utf8'))"
+NOT BLOCKED  cat $(echo .e)nv
+NOT BLOCKED  X=.en; cat ${X}v
+NOT BLOCKED  cat $HOME/proj/$(echo .)env
+NOT BLOCKED  find . -name '*nv' -exec cat {} +
+NOT BLOCKED  ls -a | xargs cat
+NOT BLOCKED  cat "$(printf '\056env')"
+NOT BLOCKED  cat $(ls -a | grep ^.en)
+NOT BLOCKED  Get-ChildItem -Force | Get-Content
+NOT BLOCKED  powershell -c "gc ('.'+'env')"
+blocked      cat .[a-f]nv
+NOT BLOCKED  grep -r KEY .
+NOT BLOCKED  grep -rn password --include=* .
+NOT BLOCKED  cp -r . /tmp/copy
+NOT BLOCKED  tar czf x.tgz .
+NOT BLOCKED  Get-ChildItem -Recurse -Force | Select-String KEY
+NOT BLOCKED  docker run -v $PWD:/w alpine cat /w/$(ls -a /w | grep en)
+NOT BLOCKED  git stash -u && git stash show -p --include-untracked
+NOT BLOCKED  cat ./e*nv
+NOT BLOCKED  bash -c "cat $(printf %s .e)nv"
+NOT BLOCKED  cd secr'e'ts && cat x
+
+-- settings.json command, run through a real shell --
+PASS settings matcher is Edit|Write|MultiEdit|Bash|PowerShell
+PASS tmpl keeps placeholders
+PASS tmpl hook command equals sample hook command
+PASS bash: hook present, allowed input -> exit 0
+PASS bash: hook present, `cat .env` -> exit 2
+PASS bash: hook FILE MISSING -> exit 2 (fails closed)
+      stderr: block-secrets-edit hook missing or failed; blocking
+PASS bash: cwd=subfolder, allowed -> exit 0
+PASS bash: cwd=subfolder, `cat .env` -> exit 2
+PASS bash: CLAUDE_PROJECT_DIR empty -> exit 2 (fails closed)
+PASS bash: project dir with spaces, allowed -> exit 0
+PASS bash: project dir with spaces, block -> exit 2
+PASS bash: hook has syntax error (node exit 1) -> wrapper gives exit 2
+INFO powershell.exe running the bash-syntax command (hook present, allowed input): exit=1 (not asserted; command is bash syntax)
+INFO powershell.exe, hook missing: exit=1
+
+146 passed, 0 failed

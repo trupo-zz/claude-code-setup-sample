@@ -1,0 +1,59 @@
+O10 secrets hook (block-secrets-edit.js): KNOWN GAPS
+Verified by tests/test-hook.js ("KNOWN GAPS" section of tests/TEST-OUTPUT.txt). Every command below exits 0 (ALLOWED) today.
+
+WHAT THE HOOK DOES
+- Edit/Write/MultiEdit/NotebookEdit: blocks protected file paths.
+- Bash/PowerShell: blocks any command that MENTIONS a protected token, whatever the verb
+  (cat, type, Get-Content, gc, less, more, head, tail, grep, rg, Select-String, findstr, sed, awk, cp, copy,
+  base64, xxd, strings, source, ".", "< .env", git add/show of .env ...).
+  Protected: .env, .env.*, secrets/ (or secret/), *.pem *.key *.p12 *.pfx, id_rsa, id_ed25519, credentials(.json).
+- Decision: .env.example, .env.sample, .env.template are NOT protected (non-secret by convention, Claude needs to read them
+  to explain config). Anything else with a .env.* suffix (.env.local, .env.production, .env.example.bak) is blocked.
+- Decision: segments starting with `git status`, `git check-ignore`, `git ls-files` are exempt (they list names, not contents)
+  unless they contain $(...) / backticks / $VAR. `git add .env`, `git show HEAD:.env` are blocked.
+- Also blocked as obfuscation: .e* .en? .[e]nv .{e}nv .* *env ?env .e""nv .e\nv.
+- Side effects (accepted, conservative): `echo secrets`, `grep -r secrets app/`, `ls secrets` and any file named *.key
+  (e.g. `cat translations.key`) are blocked even though harmless.
+- Fails closed: bad/empty/BOM-less-garbage input, missing path/command, uncaught exception -> exit 2.
+  Settings command also exits 2 if the hook file is missing, CLAUDE_PROJECT_DIR is empty, or node crashes (exit 1).
+
+NOT BLOCKED (verified, exit 0)
+Indirection / path building (regex cannot see it):
+  python -c "print(open('.en'+'v').read())"
+  python -c "print(open(chr(46)+'env').read())"
+  node -e "console.log(require('fs').readFileSync('.'+'env','utf8'))"
+  cat $(echo .e)nv
+  X=.en; cat ${X}v
+  cat $HOME/proj/$(echo .)env
+  cat "$(printf '\056env')"
+  cat $(ls -a | grep ^.en)
+  bash -c "cat $(printf %s .e)nv"
+  powershell -c "gc ('.'+'env')"
+  cd secr'e'ts && cat x               (quote-splitting "secrets")
+Globs the obfuscation rule does not cover:
+  cat ./e*nv        find . -name '*nv' -exec cat {} +        ls -a | xargs cat
+Bulk / directory operations that touch .env without naming it:
+  grep -r KEY .                    (GNU grep -r reads dotfiles)
+  grep -rn password --include=* .
+  cp -r . /tmp/copy                tar czf x.tgz .
+  Get-ChildItem -Recurse -Force | Select-String KEY        Get-ChildItem -Force | Get-Content
+  docker run -v $PWD:/w alpine sh -c 'cat /w/$(ls -a /w | grep en)'
+Other tools / channels (not hooked at all):
+  - The Read tool is NOT covered by this hook; it relies on the settings.json permissions.deny Read(...) rules
+    (./.env, ./.env.*, ./**/.env, ./**/.env.*, secrets glob). Those rules are a separate layer and have their own limits.
+  - Grep and Glob tools, MCP tools, subagents, and any hook-less Claude Code surface.
+  - Anything Claude is allowed to run that executes arbitrary code (npm test, python -m pytest, build scripts, a script it
+    wrote earlier) can read .env itself. The hook inspects command text only.
+  - Env vars already loaded in the shell (printenv etc.) are out of scope.
+  - Files containing secrets under other names (.npmrc, .netrc, .aws/config, *.keystore, service-account JSON, .envrc).
+
+STATEMENT FOR CLIENTS
+This is a best-effort guard against ACCIDENTAL reads and edits of secret files, not a security boundary.
+It does not stop a determined or prompt-injected agent. Keep production secrets out of the working folder
+(secret manager / separate env), and use the deny rules plus OS-level file permissions for anything that matters.
+
+SHELL USED FOR THE SETTINGS HOOK COMMAND
+The command is bash syntax (if [ -f ... ]; then node ...; rc=$?; ...; exit 2; fi). Claude Code runs hook commands through bash
+(Git Bash on Windows). Run through Windows PowerShell 5.1 the same string fails with exit 1 (fail OPEN), verified by
+tests/test-hook.js (INFO lines). Claude Code has an optional per-hook "shell" setting; do not set it to powershell for this hook.
+Not yet verified in a live Claude Code session: all tests use simulated hook input.

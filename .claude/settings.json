@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+      "Bash(npm test)",
+      "Bash(npm run lint)",
+      "Bash(npm run build)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/.env)",
+      "Read(./**/.env.*)",
+      "Read(./secrets/**)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -r:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/block-secrets-edit.js\" ]; then node \"$CLAUDE_PROJECT_DIR/.claude/hooks/block-secrets-edit.js\"; rc=$?; if [ $rc -eq 0 ] || [ $rc -eq 2 ]; then exit $rc; fi; echo 'block-secrets-edit hook crashed (exit '$rc'); blocking' >&2; exit 2; else echo 'block-secrets-edit hook missing; blocking' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
