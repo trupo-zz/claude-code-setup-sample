@@ -1,0 +1,14 @@
+{
+  "name": "trupo-claude-setup-sample",
+  "description": "Sample Claude Code skills from the Trupo Holding Co setup sample repo",
+  "owner": {
+    "name": "Trupo Holding Co"
+  },
+  "plugins": [
+    {
+      "name": "acme-setup-skills",
+      "source": "./plugins/acme-setup-skills",
+      "description": "Three sample skills (run-tests, pr-summary, repo-onboarding) from the Claude Code setup sample. Skills only: no hooks, no MCP servers."
+    }
+  ]
+}

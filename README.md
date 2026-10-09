@@ -35,3 +35,21 @@ It is the sample for the "Claude Code Setup Sprint" offered by Trupo Holding Co.
 ## Licence
 
 MIT, see `LICENSE`.
+
+## Install the three skills as a plugin
+
+This repository is also a Claude Code plugin marketplace (`.claude-plugin/marketplace.json`) that lists one plugin, `acme-setup-skills`, in `plugins/acme-setup-skills/`. To add the marketplace and install the plugin from your shell:
+
+```
+claude plugin marketplace add trupo-zz/claude-code-setup-sample
+claude plugin install acme-setup-skills@trupo-claude-setup-sample
+```
+
+Or inside a Claude Code session: `/plugin marketplace add trupo-zz/claude-code-setup-sample`, then `/plugin install acme-setup-skills@trupo-claude-setup-sample`. Plugin skills are namespaced by the plugin name, for example `/acme-setup-skills:run-tests`.
+
+Plainly:
+
+- The plugin contains **only the three skills** (`run-tests`, `pr-summary`, `repo-onboarding`). It has no hooks and no MCP servers. The secrets-guard hook and the permissions in `.claude/settings.json` are **not** part of the plugin.
+- In the plugin copies, the skills read the test, lint and setup commands from your project's `CLAUDE.md` instead of naming the fictional Acme Widgets app.
+- The plugin has **not been tested inside a live Claude Code session**. The JSON files were checked for syntax and passed `claude plugin validate`.
+- **AI-assisted:** the plugin files were drafted with an AI model (Claude, by Anthropic) and run by Trupo Holding Co.

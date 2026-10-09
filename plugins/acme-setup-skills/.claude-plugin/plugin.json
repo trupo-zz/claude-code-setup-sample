@@ -1,0 +1,10 @@
+{
+  "name": "acme-setup-skills",
+  "version": "0.1.0",
+  "description": "Three sample skills (run-tests, pr-summary, repo-onboarding) that read project commands from CLAUDE.md. Skills only.",
+  "author": {
+    "name": "Trupo Holding Co"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/trupo-zz/claude-code-setup-sample"
+}
