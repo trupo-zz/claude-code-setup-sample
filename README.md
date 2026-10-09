@@ -2,7 +2,7 @@
 
 This is a **sample**. It shows what a Claude Code configuration pack looks like, using a made-up app called "Acme Widgets". It is **not** a client's repository, and nothing in it describes a real product. The app code does not exist here; only the configuration files do.
 
-It is the sample for the "Claude Code Setup Sprint" offered by Trupo Holding Co. The offer, its price ($149 one time) and what is included are on the payment page: https://buy.stripe.com/4gM4gtd760Xg7MK0uL1Jm00 . This repository is just the sample, and it is free to read and reuse under the MIT licence.
+It is the sample for the "Claude Code Setup Sprint" offered by Trupo Holding Co. The offer, its price ($149 one time), the full terms (refund, delivery, reply time, retention), who runs it and how to reach us are in [OFFER.md](OFFER.md). The payment page is: https://buy.stripe.com/4gM4gtd760Xg7MK0uL1Jm00 . This repository is just the sample, and it is free to read and reuse under the MIT licence.
 
 **AI-assisted.** These files were drafted with an AI model (Claude, by Anthropic) and run by Trupo Holding Co. We do not claim that a person reads every pack.
 
